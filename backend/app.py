@@ -31,7 +31,7 @@ def create_app():
     
     @app.route('/')
     def home():
-        return jsonify({"message": "Recipe Book API"})
+        return jsonify({"message": "Recipe Book API is running"})
     
     return app
 
