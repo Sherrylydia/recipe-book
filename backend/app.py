@@ -21,9 +21,9 @@ def create_app():
     from routes.user_routes import user_bp
     
     app.register_blueprint(auth_bp)
-    app.register_blueprint(recipe_bp, url_prefix='/recipes')
-    app.register_blueprint(review_bp, url_prefix='/reviews')
-    app.register_blueprint(user_bp, url_prefix='/users')
+    app.register_blueprint(recipe_bp, url_prefix='/api/recipes')
+    app.register_blueprint(review_bp, url_prefix='/api/reviews')
+    app.register_blueprint(user_bp, url_prefix='/api/users')
     
     # Create tables
     with app.app_context():
