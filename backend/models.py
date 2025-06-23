@@ -40,11 +40,21 @@ class Recipe(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    # Relationships
-    ingredients = db.relationship('Ingredient', secondary=recipe_ingredient, 
-                                backref=db.backref('recipes', lazy=True))
-    reviews = db.relationship('Review', backref='recipe', lazy=True)
-    favorites = db.relationship('Favorite', backref='recipe', lazy=True)
+    # Relationships with cascade options
+    ingredients = db.relationship('Ingredient', 
+                                secondary=recipe_ingredient, 
+                                backref=db.backref('recipes', lazy=True),
+                                passive_deletes=True)
+    
+    reviews = db.relationship('Review', 
+                            backref='recipe', 
+                            lazy=True,
+                            cascade='all, delete-orphan')
+    
+    favorites = db.relationship('Favorite',
+                             backref='recipe',
+                             lazy=True,
+                             cascade='all, delete-orphan')
 
 class Ingredient(db.Model):
     __tablename__ = 'ingredient'

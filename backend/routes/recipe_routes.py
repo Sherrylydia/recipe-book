@@ -198,15 +198,21 @@ def update_recipe(current_user, recipe_id):
 @recipe_bp.route('/<int:recipe_id>', methods=['DELETE'])
 @token_required
 def delete_recipe(current_user, recipe_id):
-    recipe = Recipe.query.get_or_404(recipe_id)
+    try:
+        recipe = Recipe.query.get_or_404(recipe_id)
+        
+        if recipe.user_id != current_user.id:
+            return jsonify({"error": "Unauthorized to delete this recipe"}), 403
+        
+        # This will work if you've added cascade deletes to your model
+        db.session.delete(recipe)
+        db.session.commit()
+        
+        return jsonify({"message": "Recipe deleted successfully"}), 200
     
-    if recipe.user_id != current_user.id:
-        return jsonify({"error": "Unauthorized to delete this recipe"}), 403
-    
-    db.session.delete(recipe)
-    db.session.commit()
-    
-    return jsonify({"message": "Recipe deleted successfully"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to delete recipe: {str(e)}"}), 500
 
 @recipe_bp.route('/<int:recipe_id>/favorite', methods=['POST'])
 @token_required
