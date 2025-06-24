@@ -81,7 +81,7 @@ def get_recipe(recipe_id):
         'reviews': reviews
     })
 
-@recipe_bp.route('/', methods=['POST'])
+@recipe_bp.route('/add', methods=['POST'])
 @token_required
 def create_recipe(current_user):
     data = request.get_json()
