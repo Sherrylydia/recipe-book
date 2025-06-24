@@ -3,14 +3,14 @@ import axios from 'axios';
 const API_URL = 'http://localhost:5000'; // Update with your backend URL
 
 export const fetchRecipes = async (search = '', page = 1, perPage = 10) => {
-  const response = await axios.get(`${API_URL}/recipes`, {
+  const response = await axios.get(`${API_URL}/`, {
     params: { search, page, per_page: perPage }
   });
   return response.data;
 };
 
 export const fetchRecipeById = async (id) => {
-  const response = await axios.get(`${API_URL}/recipes/${id}`);
+  const response = await axios.get(`${API_URL}/${id}`);
   return response.data;
 };
 
