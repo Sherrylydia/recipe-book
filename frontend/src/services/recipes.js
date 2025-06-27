@@ -18,7 +18,8 @@ export const createRecipe = async (recipeData) => {
   const token = localStorage.getItem('token');
   const response = await axios.post(`${API_URL}/api/recipes/add`, recipeData, {
     headers: {
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      "Content-Type": "application/json",
     }
   });
   return response.data;
@@ -41,7 +42,8 @@ export const updateRecipe = async (recipeId, recipeData, token) => {
 export const deleteRecipe = async (id, token) => {
   const response = await axios.delete(`${API_URL}/api/recipes/${id}`, {
     headers: {
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      "Content-Type": "application/json",
     }
   });
   return response.data;
@@ -62,10 +64,14 @@ export const favoriteRecipe = async (recipeId, token) => {
 };
 
 export const unfavoriteRecipe = async (recipeId, token) => {
-  const response = await axios.delete(`${API_URL}/api/recipes/${recipeId}/favorite`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
+  const response = await axios.delete(
+    `${API_URL}/api/recipes/${recipeId}/favorite`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     }
-  });
+  );
   return response.data;
 };

@@ -62,7 +62,7 @@ export const RecipeProvider = ({ children }) => {
   const editRecipe = async (id, recipeData) => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token'); // or from context/state
+      const token = localStorage.getItem('token');
       const updatedRecipe = await updateRecipe(id, recipeData, token);
       return updatedRecipe;
     } catch (err) {
@@ -87,7 +87,7 @@ export const RecipeProvider = ({ children }) => {
 
   const addFavorite = async (recipeId) => {
     try {
-      const token = localStorage.getItem('token'); // or from context/state
+      const token = localStorage.getItem('token'); 
       await favoriteRecipe(recipeId, token);
     } catch (err) {
       setError(err.message);
@@ -97,7 +97,8 @@ export const RecipeProvider = ({ children }) => {
 
   const removeFavorite = async (recipeId) => {
     try {
-      await unfavoriteRecipe(recipeId);
+      const token = localStorage.getItem('token'); // or from context/state
+      await unfavoriteRecipe(recipeId, token);
     } catch (err) {
       setError(err.message);
       throw err;

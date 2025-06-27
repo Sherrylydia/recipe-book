@@ -17,11 +17,8 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
-        
         if 'Authorization' in request.headers:
-            parts = request.headers['Authorization'].split(" ")
-            if len(parts) == 2 and parts[0] == 'Bearer':
-                token = parts[1]
+            token = request.headers['Authorization'].split(" ")[1]
 
         if not token:
             return jsonify({'error': 'Token is missing'}), 401
@@ -36,7 +33,7 @@ def token_required(f):
         except jwt.ExpiredSignatureError:
             return jsonify({'error': 'Token has expired'}), 401
         except jwt.InvalidTokenError as e:
-            print(f"JWT Decode Error: {e}")  # ← Add this
+            print(f"JWT Decode Error: {e}") 
             return jsonify({'error': 'Invalid token'}), 401
 
         return f(current_user, *args, **kwargs)
