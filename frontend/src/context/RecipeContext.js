@@ -12,6 +12,7 @@ import {
 const RecipeContext = createContext();
 
 export const RecipeProvider = ({ children }) => {
+
   const [recipes, setRecipes] = useState([]);
   const [currentRecipe, setCurrentRecipe] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -61,7 +62,8 @@ export const RecipeProvider = ({ children }) => {
   const editRecipe = async (id, recipeData) => {
     try {
       setLoading(true);
-      const updatedRecipe = await updateRecipe(id, recipeData);
+      const token = localStorage.getItem('token'); // or from context/state
+      const updatedRecipe = await updateRecipe(id, recipeData, token);
       return updatedRecipe;
     } catch (err) {
       setError(err.message);
@@ -85,7 +87,8 @@ export const RecipeProvider = ({ children }) => {
 
   const addFavorite = async (recipeId) => {
     try {
-      await favoriteRecipe(recipeId);
+      const token = localStorage.getItem('token'); // or from context/state
+      await favoriteRecipe(recipeId, token);
     } catch (err) {
       setError(err.message);
       throw err;

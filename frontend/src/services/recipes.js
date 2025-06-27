@@ -24,12 +24,17 @@ export const createRecipe = async (recipeData) => {
   return response.data;
 };
 
-export const updateRecipe = async (id, recipeData, token) => {
-  const response = await axios.put(`${API_URL}/api/recipes/${id}`, recipeData, {
-    headers: {
-      'Authorization': `Bearer ${token}`
+export const updateRecipe = async (recipeId, recipeData, token) => {
+  const response = await axios.put(
+    `${API_URL}/api/recipes/${recipeId}`,
+    recipeData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     }
-  });
+  );
   return response.data;
 };
 
@@ -43,11 +48,16 @@ export const deleteRecipe = async (id, token) => {
 };
 
 export const favoriteRecipe = async (recipeId, token) => {
-  const response = await axios.post(`${API_URL}/api/recipes/${recipeId}/favorite`, {}, {
-    headers: {
-      'Authorization': `Bearer ${token}`
+  const response = await axios.post(
+    `${API_URL}/api/recipes/${recipeId}/favorite`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     }
-  });
+  );
   return response.data;
 };
 
