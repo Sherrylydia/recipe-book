@@ -10,7 +10,7 @@ export const fetchRecipes = async (search = '', page = 1, perPage = 10) => {
 };
 
 export const fetchRecipeById = async (id) => {
-  const response = await axios.get(`${API_URL}/${id}`);
+  const response = await axios.get(`${API_URL}/api/recipes/${id}`);
   return response.data;
 };
 

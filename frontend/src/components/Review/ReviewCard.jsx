@@ -2,11 +2,11 @@ import { useAuth } from '../../context/AuthContext';
 import { deleteReview } from '../../services/reviews';
 
 const ReviewCard = ({ review, onDelete }) => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
 
   const handleDelete = async () => {
     try {
-      await deleteReview(review.id);
+      await deleteReview(review.id, token);
       if (onDelete) onDelete();
     } catch (err) {
       console.error('Error deleting review:', err);

@@ -1,37 +1,46 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = 'http://localhost:5000'; // Update with your backend URL
+const API_URL = "http://localhost:5000"; // Update with your backend URL
 
 export const fetchRecipeReviews = async (recipeId, page = 1, perPage = 5) => {
-  const response = await axios.get(`${API_URL}/reviews/recipe/${recipeId}`, {
-    params: { page, per_page: perPage }
-  });
+  const response = await axios.get(
+    `${API_URL}/api/reviews/recipe/${recipeId}`,
+    {
+      params: { page, per_page: perPage },
+    }
+  );
   return response.data;
 };
 
 export const createReview = async (reviewData, token) => {
-  const response = await axios.post(`${API_URL}/reviews`, reviewData, {
+  const response = await axios.post(`${API_URL}/api/reviews`, reviewData, {
     headers: {
-      'Authorization': `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
   });
   return response.data;
 };
 
 export const updateReview = async (reviewId, reviewData, token) => {
-  const response = await axios.put(`${API_URL}/reviews/${reviewId}`, reviewData, {
-    headers: {
-      'Authorization': `Bearer ${token}`
+  const response = await axios.put(
+    `${API_URL}/api/reviews/${reviewId}`,
+    reviewData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }
-  });
+  );
   return response.data;
 };
 
 export const deleteReview = async (reviewId, token) => {
-  const response = await axios.delete(`${API_URL}/reviews/${reviewId}`, {
+  console.log('Deleting review', reviewId, 'with token', token);
+  const response = await axios.delete(`${API_URL}/api/reviews/${reviewId}`, {
     headers: {
-      'Authorization': `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   });
   return response.data;
 };

@@ -3,7 +3,6 @@ from models import db, Review
 from utils.auth import token_required
 
 review_bp = Blueprint('reviews', __name__)
-
 @review_bp.route('/recipe/<int:recipe_id>', methods=['GET'])
 def get_recipe_reviews(recipe_id):
     page = request.args.get('page', 1, type=int)
@@ -31,7 +30,7 @@ def get_recipe_reviews(recipe_id):
         'current_page': reviews.page
     })
 
-@review_bp.route('/', methods=['POST'])
+@review_bp.route('', methods=['POST'])
 @token_required
 def create_review(current_user):
     data = request.get_json()
