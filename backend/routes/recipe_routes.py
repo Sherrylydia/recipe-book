@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from models import db, Recipe, Ingredient, Favorite, recipe_ingredient
 from utils.auth import token_required
 from sqlalchemy import or_
+from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 
 recipe_bp = Blueprint('recipes', __name__)
 
@@ -21,14 +22,25 @@ def get_all_recipes():
     
     recipes = query.paginate(page=page, per_page=per_page)
     
+    user_id = None
+    try:
+        verify_jwt_in_request(optional=True)
+        user_id = get_jwt_identity()
+    except Exception:
+        pass
+
     recipes_data = []
     for recipe in recipes.items:
+        is_favorited = False
+        if user_id:
+            is_favorited = Favorite.query.filter_by(user_id=user_id, recipe_id=recipe.id).first() is not None
         recipes_data.append({
             'id': recipe.id,
             'title': recipe.title,
             'description': recipe.description,
             'author': recipe.author.username,
-            'created_at': recipe.created_at
+            'created_at': recipe.created_at,
+            'is_favorited': is_favorited
         })
     
     return jsonify({

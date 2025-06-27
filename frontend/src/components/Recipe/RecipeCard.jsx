@@ -1,23 +1,25 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { useRecipes } from '../../context/RecipeContext';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useRecipes } from "../../context/RecipeContext";
 
 const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
   const { isAuthenticated } = useAuth();
-  const { addFavorite, removeFavorite } = useRecipes();
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { handleFavorite } = useRecipes();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [localError, setLocalError] = useState(null);
 
-  const handleFavorite = async () => {
+  const handleFavoriteClick = async () => {
+    if (!isAuthenticated || isProcessing) return;
+
+    setIsProcessing(true);
+    setLocalError(null);
     try {
-      if (isFavorite) {
-        await removeFavorite(recipe.id);
-      } else {
-        await addFavorite(recipe.id);
-      }
-      setIsFavorite(!isFavorite);
+      await handleFavorite(recipe);
     } catch (err) {
-      console.error('Error handling favorite:', err);
+      setLocalError(err.response?.data?.error || "Failed to update favorite");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -30,18 +32,20 @@ const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
           </h3>
         </Link>
         <p className="text-gray-600 mt-2 line-clamp-2">
-          {recipe.description || 'No description provided'}
+          {recipe.description || "No description provided"}
         </p>
         <div className="mt-4 flex justify-between items-center">
           <span className="text-sm text-gray-500">
-            By {recipe.author?.username || 'Unknown'}
+            By {recipe.author?.username || "Unknown"}
           </span>
           {isAuthenticated && (
             <button
-              onClick={handleFavorite}
-              className={`p-2 rounded-full ${isFavorite ? 'text-yellow-500' : 'text-gray-400'} hover:text-yellow-500 transition`}
+              onClick={handleFavoriteClick}
+              className={`p-2 rounded-full ${
+                recipe.is_favorited ? "text-yellow-500" : "text-gray-400"
+              } hover:text-yellow-500 transition`}
             >
-              {isFavorite ? '★' : '☆'}
+              {recipe.is_favorited ? "★" : "☆"}
             </button>
           )}
         </div>

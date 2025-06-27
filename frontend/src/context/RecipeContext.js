@@ -1,24 +1,23 @@
-import { createContext, useContext, useState } from 'react';
-import { 
-  fetchRecipes, 
-  fetchRecipeById, 
-  createRecipe, 
-  updateRecipe, 
+import { createContext, useContext, useState } from "react";
+import {
+  fetchRecipes,
+  fetchRecipeById,
+  createRecipe,
+  updateRecipe,
   deleteRecipe,
   favoriteRecipe,
-  unfavoriteRecipe
-} from '../services/recipes';
+  unfavoriteRecipe,
+} from "../services/recipes";
 
 const RecipeContext = createContext();
 
 export const RecipeProvider = ({ children }) => {
-
   const [recipes, setRecipes] = useState([]);
   const [currentRecipe, setCurrentRecipe] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const getRecipes = async (search = '', page = 1) => {
+  const getRecipes = async (search = "", page = 1) => {
     try {
       setLoading(true);
       const data = await fetchRecipes(search, page);
@@ -62,7 +61,7 @@ export const RecipeProvider = ({ children }) => {
   const editRecipe = async (id, recipeData) => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const updatedRecipe = await updateRecipe(id, recipeData, token);
       return updatedRecipe;
     } catch (err) {
@@ -76,7 +75,8 @@ export const RecipeProvider = ({ children }) => {
   const removeRecipe = async (id) => {
     try {
       setLoading(true);
-      await deleteRecipe(id);
+      const token = localStorage.getItem("token");
+      await deleteRecipe(id, token);
     } catch (err) {
       setError(err.message);
       throw err;
@@ -87,9 +87,25 @@ export const RecipeProvider = ({ children }) => {
 
   const addFavorite = async (recipeId) => {
     try {
-      const token = localStorage.getItem('token'); 
-      await favoriteRecipe(recipeId, token);
+      const token = localStorage.getItem("token");
+      const response = await favoriteRecipe(recipeId, token);
+      // Update the recipes array to reflect the favorite status
+      setRecipes((prevRecipes) =>
+        prevRecipes.map((recipe) =>
+          recipe.id === recipeId ? { ...recipe, is_favorited: true } : recipe
+        )
+      );
+      return true;
     } catch (err) {
+      if (err.response?.status === 400) {
+        // If already favorited, sync the state
+        setRecipes((prevRecipes) =>
+          prevRecipes.map((recipe) =>
+            recipe.id === recipeId ? { ...recipe, is_favorited: true } : recipe
+          )
+        );
+        return true;
+      }
       setError(err.message);
       throw err;
     }
@@ -97,10 +113,30 @@ export const RecipeProvider = ({ children }) => {
 
   const removeFavorite = async (recipeId) => {
     try {
-      const token = localStorage.getItem('token'); // or from context/state
+      const token = localStorage.getItem("token");
       await unfavoriteRecipe(recipeId, token);
+      // Update the recipes array
+      setRecipes((prevRecipes) =>
+        prevRecipes.map((recipe) =>
+          recipe.id === recipeId ? { ...recipe, is_favorited: false } : recipe
+        )
+      );
+      return false;
     } catch (err) {
       setError(err.message);
+      throw err;
+    }
+  };
+
+  const handleFavorite = async (recipe) => {
+    try {
+      if (recipe.is_favorited) {
+        return await removeFavorite(recipe.id);
+      } else {
+        return await addFavorite(recipe.id);
+      }
+    } catch (err) {
+      console.error("Error handling favorite:", err);
       throw err;
     }
   };
@@ -119,6 +155,7 @@ export const RecipeProvider = ({ children }) => {
         removeRecipe,
         addFavorite,
         removeFavorite,
+        handleFavorite,
       }}
     >
       {children}
