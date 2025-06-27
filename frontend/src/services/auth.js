@@ -22,7 +22,7 @@ export const resetPassword = async (data, token) => {
 };
 
 export const getCurrentUser = async (token) => {
-  const response = await axios.get(`${API_URL}/users/me`, {
+  const response = await axios.get(`${API_URL}/api/users/me`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
