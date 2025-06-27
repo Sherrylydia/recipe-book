@@ -3,12 +3,12 @@ import axios from 'axios';
 const API_URL = 'http://localhost:5000'; // Update with your backend URL
 
 export const fetchUserProfile = async (userId) => {
-  const response = await axios.get(`${API_URL}/users/${userId}`);
+  const response = await axios.get(`${API_URL}/api/users/${userId}`);
   return response.data;
 };
 
 export const fetchUserRecipes = async (userId, page = 1, perPage = 10) => {
-  const response = await axios.get(`${API_URL}/users/me/recipes`, {
+  const response = await axios.get(`${API_URL}/api/users/me/recipes`, {
     params: { page, per_page: perPage },
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -18,7 +18,7 @@ export const fetchUserRecipes = async (userId, page = 1, perPage = 10) => {
 };
 
 export const fetchUserFavorites = async (userId, page = 1, perPage = 10) => {
-  const response = await axios.get(`${API_URL}/users/me/favorites`, {
+  const response = await axios.get(`${API_URL}/api/users/me/favorites`, {
     params: { page, per_page: perPage },
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('token')}`
