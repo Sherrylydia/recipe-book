@@ -6,6 +6,7 @@ import Loading from '../UI/Loading';
 import Alert from '../UI/Alert';
 import ReviewList from '../Review/ReviewList';
 import ReviewForm from '../Review/ReviewForm';
+import { fetchRecipeReviews, createReview } from '../../services/reviews';
 
 const RecipeDetail = () => {
   const { recipeId } = useParams();
@@ -13,10 +14,51 @@ const RecipeDetail = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviews, setReviews] = useState(null);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [reviewsError, setReviewsError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     getRecipe(recipeId);
   }, [recipeId]);
+
+  // Fetch reviews
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        setReviewsLoading(true);
+        const data = await fetchRecipeReviews(recipeId, currentPage);
+        setReviews(data);
+      } catch (err) {
+        setReviewsError(err.message);
+      } finally {
+        setReviewsLoading(false);
+      }
+    };
+    fetchReviews();
+  }, [recipeId, currentPage]);
+
+  // Handler to add review to state
+  const handleReviewAdded = async (review) => {
+    // Option 1: Refetch reviews (simple, always up-to-date)
+    setCurrentPage(1); // Go to first page to see new review
+    // Option 2: Optimistically update reviews (advanced)
+    // setReviews((prev) => ({
+    //   ...prev,
+    //   reviews: [review, ...prev.reviews],
+    //   total: prev.total + 1,
+    // }));
+  };
+
+  // Handler to remove review from state
+  const handleReviewDeleted = (deletedId) => {
+    setReviews((prev) => ({
+      ...prev,
+      reviews: prev.reviews.filter((r) => r.id !== deletedId),
+      total: prev.total - 1,
+    }));
+  };
 
   if (loading) return <Loading />;
   if (error) return <Alert message={error} type="error" />;
@@ -98,11 +140,23 @@ const RecipeDetail = () => {
 
         {showReviewForm && (
           <div className="mb-6">
-            <ReviewForm onReviewAdded={() => setShowReviewForm(false)} />
+            <ReviewForm
+              onReviewAdded={handleReviewAdded}
+              setReviews={setReviews}
+              recipeId={recipeId}
+              setShowReviewForm={setShowReviewForm}
+            />
           </div>
         )}
 
-        <ReviewList recipeId={recipeId} />
+        <ReviewList
+          reviews={reviews}
+          loading={reviewsLoading}
+          error={reviewsError}
+          onDelete={handleReviewDeleted}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
     </div>
   );

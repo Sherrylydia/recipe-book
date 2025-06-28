@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { createReview } from '../../services/reviews';
+import { fetchRecipeReviews, createReview } from '../../services/reviews';
 import { useAuth } from '../../context/AuthContext';
 import Alert from '../UI/Alert';
 
-const ReviewForm = ({ onReviewAdded }) => {
-  const { recipeId } = useParams();
+const ReviewForm = ({ onReviewAdded, setReviews, recipeId, setShowReviewForm }) => {
   const { token } = useAuth();
   const [rating, setRating] = useState(5);
   const [content, setContent] = useState('');
@@ -16,17 +15,24 @@ const ReviewForm = ({ onReviewAdded }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    
+
     try {
-      await createReview({ 
-        recipe_id: recipeId, 
-        rating, 
-        content 
+      const res = await createReview({
+        recipe_id: recipeId,
+        rating,
+        content,
       }, token);
-      
+
+      // Option 1: Refetch reviews for latest data
+      if (setReviews) {
+        const data = await fetchRecipeReviews(recipeId, 1);
+        setReviews(data);
+      }
+
       setContent('');
       setRating(5);
-      if (onReviewAdded) onReviewAdded();
+      if (onReviewAdded) onReviewAdded(res.review);
+      if (setShowReviewForm) setShowReviewForm(false);
     } catch (err) {
       setError(err.message);
     } finally {
