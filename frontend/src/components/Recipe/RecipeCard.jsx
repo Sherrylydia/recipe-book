@@ -36,7 +36,7 @@ const RecipeCard = ({ recipe, showActions = false, onDelete }) => {
         </p>
         <div className="mt-4 flex justify-between items-center">
           <span className="text-sm text-gray-500">
-            By {recipe.author?.username || "Unknown"}
+            {/* By {recipe.author?.username || "Unknown"} */}
           </span>
           {isAuthenticated && (
             <button

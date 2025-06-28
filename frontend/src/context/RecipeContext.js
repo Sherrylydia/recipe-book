@@ -118,10 +118,10 @@ export const RecipeProvider = ({ children }) => {
       // Update the recipes array
       setRecipes((prevRecipes) =>
         prevRecipes.map((recipe) =>
-          recipe.id === recipeId ? { ...recipe, is_favorited: false } : recipe
+          recipe.id === recipeId ? { ...recipe, is_favorited: true } : recipe
         )
       );
-      return false;
+      return true;
     } catch (err) {
       setError(err.message);
       throw err;
@@ -130,11 +130,24 @@ export const RecipeProvider = ({ children }) => {
 
   const handleFavorite = async (recipe) => {
     try {
+      let result;
       if (recipe.is_favorited) {
-        return await removeFavorite(recipe.id);
+        result = await removeFavorite(recipe.id);
+        // Update currentRecipe if on detail page
+        setCurrentRecipe((prev) =>
+          prev && prev.id === recipe.id
+            ? { ...prev, is_favorited: false }
+            : prev
+        );
       } else {
-        return await addFavorite(recipe.id);
+        result = await addFavorite(recipe.id);
+        setCurrentRecipe((prev) =>
+          prev && prev.id === recipe.id
+            ? { ...prev, is_favorited: true }
+            : prev
+        );
       }
+      return result;
     } catch (err) {
       console.error("Error handling favorite:", err);
       throw err;
