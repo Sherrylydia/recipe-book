@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000'; // Update with your backend URL
+const API_URL = 'https://recipe-book-prsm.onrender.com'; // My backend URL
 
 export const registerUser = async (userData) => {
   const response = await axios.post(`${API_URL}/register`, userData);
