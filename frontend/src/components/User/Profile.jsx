@@ -5,9 +5,11 @@ import RecipeCard from '../Recipe/RecipeCard';
 import Loading from '../UI/Loading';
 import Alert from '../UI/Alert';
 import { Tab } from '@headlessui/react';
+import { useRecipes } from '../../context/RecipeContext'; // Add this import
 
 const Profile = () => {
   const { user } = useAuth();
+  const { removeRecipe } = useRecipes(); // Add this line
   const [profile, setProfile] = useState(null);
   const [recipes, setRecipes] = useState(null);
   const [favorites, setFavorites] = useState(null);
@@ -36,6 +38,19 @@ const Profile = () => {
 
     if (user) fetchData();
   }, [user]);
+
+  // Add this handler
+  const handleDelete = async (id) => {
+    try {
+      await removeRecipe(id);
+      setRecipes((prev) => ({
+        ...prev,
+        recipes: prev.recipes.filter((r) => r.id !== id),
+      }));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   if (loading) return <Loading />;
   if (error) return <Alert message={error} type="error" />;
@@ -82,7 +97,7 @@ const Profile = () => {
           <Tab.Panel>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {recipes?.recipes?.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} showActions />
+                <RecipeCard key={recipe.id} recipe={recipe} showActions onDelete={handleDelete} />
               ))}
             </div>
           </Tab.Panel>
