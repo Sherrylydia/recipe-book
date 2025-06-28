@@ -12,7 +12,7 @@ import {
 const RecipeContext = createContext();
 
 export const RecipeProvider = ({ children }) => {
-  const [recipes, setRecipes] = useState([]);
+  const [recipes, setRecipes] = useState({recipes:[], page:1});
   const [currentRecipe, setCurrentRecipe] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -90,20 +90,22 @@ export const RecipeProvider = ({ children }) => {
       const token = localStorage.getItem("token");
       const response = await favoriteRecipe(recipeId, token);
       // Update the recipes array to reflect the favorite status
-      setRecipes((prevRecipes) =>
-        prevRecipes.map((recipe) =>
+      setRecipes((prevRecipes) => ({
+        ...prevRecipes,
+        recipes: prevRecipes.recipes.map((recipe) =>
           recipe.id === recipeId ? { ...recipe, is_favorited: true } : recipe
         )
-      );
+      }));
       return true;
     } catch (err) {
       if (err.response?.status === 400) {
         // If already favorited, sync the state
-        setRecipes((prevRecipes) =>
-          prevRecipes.map((recipe) =>
+        setRecipes((prevRecipes) => ({
+          ...prevRecipes,
+          recipes: prevRecipes.recipes.map((recipe) =>
             recipe.id === recipeId ? { ...recipe, is_favorited: true } : recipe
           )
-        );
+        }));
         return true;
       }
       setError(err.message);
@@ -116,11 +118,12 @@ export const RecipeProvider = ({ children }) => {
       const token = localStorage.getItem("token");
       await unfavoriteRecipe(recipeId, token);
       // Update the recipes array
-      setRecipes((prevRecipes) =>
-        prevRecipes.map((recipe) =>
-          recipe.id === recipeId ? { ...recipe, is_favorited: true } : recipe
+      setRecipes((prevRecipes) => ({
+        ...prevRecipes,
+        recipes: prevRecipes.recipes.map((recipe) =>
+          recipe.id === recipeId ? { ...recipe, is_favorited: false } : recipe
         )
-      );
+      }));
       return true;
     } catch (err) {
       setError(err.message);
