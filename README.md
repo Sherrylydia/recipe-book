@@ -94,7 +94,7 @@ recipe-book/
    python app.py
    ```
    
-   The API will be available at `http://localhost:5000`.
+   The API will be available at `https://recipe-book-prsm.onrender.com`.
 
 ### Frontend Setup
 
@@ -109,7 +109,7 @@ recipe-book/
    npm run start
    ```
    
-   The app will be available at `http://localhost:3000` (or as configured).
+   The app will be available at `https://recipe-book-mauve-zeta.vercel.app/` (or as configured).
 
 ## API Overview
 
