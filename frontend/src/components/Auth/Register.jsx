@@ -16,7 +16,7 @@ const Register = () => {
       await register({ username, email, password });
       navigate('/');
     } catch (err) {
-      // Error is handled by AuthContext
+      
     }
   };
 

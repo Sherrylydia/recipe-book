@@ -39,7 +39,7 @@ const RecipeDetail = () => {
     fetchReviews();
   }, [recipeId, currentPage]);
 
-  // Handler to add review to state
+  
   const handleReviewAdded = async (review) => {
     // Option 1: Refetch reviews (simple, always up-to-date)
     setCurrentPage(1); // Go to first page to see new review
@@ -51,7 +51,7 @@ const RecipeDetail = () => {
     // }));
   };
 
-  // Handler to remove review from state
+  
   const handleReviewDeleted = (deletedId) => {
     setReviews((prev) => ({
       ...prev,

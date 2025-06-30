@@ -23,7 +23,7 @@ const ReviewForm = ({ onReviewAdded, setReviews, recipeId, setShowReviewForm }) 
         content,
       }, token);
 
-      // Option 1: Refetch reviews for latest data
+      
       if (setReviews) {
         const data = await fetchRecipeReviews(recipeId, 1);
         setReviews(data);

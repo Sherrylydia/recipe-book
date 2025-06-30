@@ -89,7 +89,7 @@ export const RecipeProvider = ({ children }) => {
     try {
       const token = localStorage.getItem("token");
       const response = await favoriteRecipe(recipeId, token);
-      // Update the recipes array to reflect the favorite status
+      
       setRecipes((prevRecipes) => ({
         ...prevRecipes,
         recipes: prevRecipes.recipes.map((recipe) =>
@@ -99,7 +99,7 @@ export const RecipeProvider = ({ children }) => {
       return true;
     } catch (err) {
       if (err.response?.status === 400) {
-        // If already favorited, sync the state
+       
         setRecipes((prevRecipes) => ({
           ...prevRecipes,
           recipes: prevRecipes.recipes.map((recipe) =>
@@ -117,7 +117,7 @@ export const RecipeProvider = ({ children }) => {
     try {
       const token = localStorage.getItem("token");
       await unfavoriteRecipe(recipeId, token);
-      // Update the recipes array
+      
       setRecipes((prevRecipes) => ({
         ...prevRecipes,
         recipes: prevRecipes.recipes.map((recipe) =>
@@ -136,7 +136,7 @@ export const RecipeProvider = ({ children }) => {
       let result;
       if (recipe.is_favorited) {
         result = await removeFavorite(recipe.id);
-        // Update currentRecipe if on detail page
+        
         setCurrentRecipe((prev) =>
           prev && prev.id === recipe.id
             ? { ...prev, is_favorited: false }

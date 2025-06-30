@@ -44,7 +44,7 @@ def create_review(current_user):
     if not 1 <= rating <= 5:
         return jsonify({"error": "Rating must be between 1 and 5"}), 400
     
-    # Check if user already reviewed this recipe
+    
     existing_review = Review.query.filter_by(
         user_id=current_user.id,
         recipe_id=recipe_id

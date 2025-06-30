@@ -7,7 +7,7 @@ const ReviewCard = ({ review, onDelete }) => {
   const handleDelete = async () => {
     try {
       await deleteReview(review.id, token);
-      if (onDelete) onDelete(review.id); // Pass the review id
+      if (onDelete) onDelete(review.id); 
     } catch (err) {
       console.error('Error deleting review:', err);
     }

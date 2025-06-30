@@ -82,7 +82,7 @@ const RecipeForm = () => {
       }
       navigate(isEditing ? `/recipes/${recipeId}` : '/recipes');
     } catch (err) {
-      // Error is handled by RecipeContext
+      
     }
   };
 

@@ -56,7 +56,7 @@ def get_recipe(recipe_id):
     
     ingredients = []
     for ingredient in recipe.ingredients:
-        # Get the amount from the association table
+        
         association = db.session.query(recipe_ingredient).filter_by(
             recipe_id=recipe.id,
             ingredient_id=ingredient.id
@@ -101,7 +101,7 @@ def create_recipe(current_user):
     if not all([data.get('title'), data.get('instructions')]):
         return jsonify({"error": "Missing required fields"}), 400
     
-    # Create recipe
+    
     new_recipe = Recipe(
         title=data['title'],
         description=data.get('description', ''),
@@ -110,17 +110,17 @@ def create_recipe(current_user):
     )
     
     db.session.add(new_recipe)
-    db.session.flush()  # This assigns an ID without committing
+    db.session.flush()  
     
-    # Add ingredients
+    
     for ingredient_data in data.get('ingredients', []):
         ingredient = Ingredient.query.filter_by(name=ingredient_data['name']).first()
         if not ingredient:
             ingredient = Ingredient(name=ingredient_data['name'])
             db.session.add(ingredient)
-            db.session.flush()  # To get the ID
+            db.session.flush()  
         
-        # Add to association table with amount
+        
         stmt = recipe_ingredient.insert().values(
             recipe_id=new_recipe.id,
             ingredient_id=ingredient.id,
@@ -128,7 +128,7 @@ def create_recipe(current_user):
         )
         db.session.execute(stmt)
     
-    db.session.commit()  # Now commit everything together
+    db.session.commit()  
     
     return jsonify({
         "message": "Recipe created successfully",
@@ -139,20 +139,20 @@ def create_recipe(current_user):
 @token_required
 def update_recipe(current_user, recipe_id):
     try:
-        # Get the recipe or return 404
+        
         recipe = Recipe.query.get_or_404(recipe_id)
         
-        # Verify ownership
+        
         if recipe.user_id != current_user.id:
             return jsonify({"error": "Unauthorized to edit this recipe"}), 403
         
         data = request.get_json()
         
-        # Validate required data
+        
         if not data:
             return jsonify({"error": "No data provided"}), 400
             
-        # Update basic recipe info
+        
         if 'title' in data:
             recipe.title = data['title']
         if 'description' in data:
@@ -160,25 +160,25 @@ def update_recipe(current_user, recipe_id):
         if 'instructions' in data:
             recipe.instructions = data['instructions']
         
-        # Update ingredients if provided
+        
         if 'ingredients' in data:
-            # Validate ingredients format
+            
             if not isinstance(data['ingredients'], list):
                 return jsonify({"error": "Ingredients must be an array"}), 400
                 
-            # Clear existing ingredients in a transaction
+            
             db.session.execute(
                 recipe_ingredient.delete().where(
                     recipe_ingredient.c.recipe_id == recipe.id
                 )
             )
             
-            # Process new ingredients
+            
             for ingredient_data in data['ingredients']:
                 if not ingredient_data.get('name'):
-                    continue  # Skip invalid entries
+                    continue  
                     
-                # Find or create ingredient
+                
                 ingredient = Ingredient.query.filter_by(
                     name=ingredient_data['name'].strip()
                 ).first()
@@ -186,9 +186,9 @@ def update_recipe(current_user, recipe_id):
                 if not ingredient:
                     ingredient = Ingredient(name=ingredient_data['name'].strip())
                     db.session.add(ingredient)
-                    db.session.flush()  # Get the new ID
+                    db.session.flush()  
                 
-                # Create association
+                
                 db.session.execute(
                     recipe_ingredient.insert().values(
                         recipe_id=recipe.id,
@@ -216,7 +216,7 @@ def delete_recipe(current_user, recipe_id):
         if recipe.user_id != current_user.id:
             return jsonify({"error": "Unauthorized to delete this recipe"}), 403
         
-        # This will work if you've added cascade deletes to your model
+        
         db.session.delete(recipe)
         db.session.commit()
         
@@ -231,7 +231,7 @@ def delete_recipe(current_user, recipe_id):
 def favorite_recipe(current_user, recipe_id):
     recipe = Recipe.query.get_or_404(recipe_id)
     
-    # Check if already favorited
+   
     existing_favorite = Favorite.query.filter_by(
         user_id=current_user.id,
         recipe_id=recipe.id

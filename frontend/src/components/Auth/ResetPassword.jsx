@@ -17,7 +17,7 @@ const ResetPassword = () => {
         navigate('/profile');
       }
     } catch (err) {
-      // Error is handled by AuthContext
+      
     }
   };
 

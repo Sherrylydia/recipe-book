@@ -15,7 +15,6 @@ const Login = () => {
       await login({ email, password });
       navigate('/');
     } catch (err) {
-      // Error is handled by AuthContext
     }
   };
 

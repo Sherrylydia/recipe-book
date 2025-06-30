@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
-# Association table for many-to-many relationship between Recipe and Ingredient
+
 recipe_ingredient = db.Table('recipe_ingredient',
     db.Column('recipe_id', db.Integer, db.ForeignKey('recipe.id'), primary_key=True),
     db.Column('ingredient_id', db.Integer, db.ForeignKey('ingredient.id'), primary_key=True),
@@ -19,7 +19,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(256), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # Relationships
+    
     recipes = db.relationship('Recipe', backref='author', lazy=True)
     reviews = db.relationship('Review', backref='user', lazy=True)
     favorites = db.relationship('Favorite', backref='user', lazy=True)
@@ -40,7 +40,7 @@ class Recipe(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    # Relationships with cascade options
+    
     ingredients = db.relationship('Ingredient', 
                                 secondary=recipe_ingredient, 
                                 backref=db.backref('recipes', lazy=True),

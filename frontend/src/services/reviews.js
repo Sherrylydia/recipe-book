@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://recipe-book-prsm.onrender.com"; // Update with your backend URL
+const API_URL = "https://recipe-book-prsm.onrender.com"; 
 
 export const fetchRecipeReviews = async (recipeId, page = 1, perPage = 5) => {
   const response = await axios.get(

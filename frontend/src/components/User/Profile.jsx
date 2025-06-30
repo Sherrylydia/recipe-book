@@ -5,11 +5,11 @@ import RecipeCard from '../Recipe/RecipeCard';
 import Loading from '../UI/Loading';
 import Alert from '../UI/Alert';
 import { Tab } from '@headlessui/react';
-import { useRecipes } from '../../context/RecipeContext'; // Add this import
+import { useRecipes } from '../../context/RecipeContext'; 
 
 const Profile = () => {
   const { user } = useAuth();
-  const { removeRecipe } = useRecipes(); // Add this line
+  const { removeRecipe } = useRecipes(); 
   const [profile, setProfile] = useState(null);
   const [recipes, setRecipes] = useState(null);
   const [favorites, setFavorites] = useState(null);
